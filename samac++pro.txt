@@ -1,0 +1,472 @@
+CGPA calculator
+#include <iostream>
+#include <iomanip>
+#include <string>
+using namespace std;
+
+int main() {
+    int numCourses;
+    string courseName;
+    float grade, creditHours;
+    float totalCredits = 0, totalGradePoints = 0, cgpa;
+
+    cout << "========== CGPA CALCULATOR ==========\n";
+    cout << "Enter the number of courses: ";
+    cin >> numCourses;
+
+    // Arrays to store course details
+    string courses[100];
+    float grades[100];
+    float credits[100];
+
+    // Input course details
+    for (int i = 0; i < numCourses; i++) {
+        cout << "\nCourse " << i + 1 << endl;
+
+        cout << "Enter Course Name: ";
+        cin >> courseName;
+
+        cout << "Enter Grade (0 - 10): ";
+        cin >> grade;
+
+        cout << "Enter Credit Hours: ";
+        cin >> creditHours;
+
+        courses[i] = courseName;
+        grades[i] = grade;
+        credits[i] = creditHours;
+
+        totalCredits += creditHours;
+        totalGradePoints += (grade * creditHours);
+    }
+
+    // Calculate GPA/CGPA
+    cgpa = totalGradePoints / totalCredits;
+
+    // Display Results
+    cout << "\n========== RESULT ==========\n";
+    cout << left << setw(15) << "Course"
+         << setw(10) << "Grade"
+         << setw(10) << "Credits" << endl;
+
+    cout << "-----------------------------------\n";
+
+    for (int i = 0; i < numCourses; i++) {
+        cout << left << setw(15) << courses[i]
+             << setw(10) << grades[i]
+             << setw(10) << credits[i] << endl;
+    }
+
+    cout << "-----------------------------------\n";
+    cout << "Total Credits      : " << totalCredits << endl;
+    cout << "Total Grade Points : " << totalGradePoints << endl;
+    cout << fixed << setprecision(2);
+    cout << "Semester GPA       : " << cgpa << endl;
+    cout << "Overall CGPA       : " << cgpa << endl;
+
+    return 0;
+}
+========== CGPA CALCULATOR ==========
+Enter the number of courses: 3
+
+Course 1
+Enter Course Name: Math
+Enter Grade (0 - 10): 9
+Enter Credit Hours: 4
+
+Course 2
+Enter Course Name: Physics
+Enter Grade (0 - 10): 8
+Enter Credit Hours: 3
+
+Course 3
+Enter Course Name: English
+Enter Grade (0 - 10): 10
+Enter Credit Hours: 2
+
+========== RESULT ==========
+Course         Grade     Credits
+-----------------------------------
+Math           9         4
+Physics        8         3
+English        10        2
+-----------------------------------
+Total Credits      : 9
+Total Grade Points : 78
+Semester GPA       : 8.67
+Overall CGPA       : 8.67
+
+
+
+Login and registration system
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+// Function to check if username already exists
+bool userExists(string username) {
+    ifstream file("users.txt");
+    string user, pass;
+
+    while (file >> user >> pass) {
+        if (user == username) {
+            file.close();
+            return true;
+        }
+    }
+
+    file.close();
+    return false;
+}
+
+// Registration Function
+void registerUser() {
+    string username, password;
+
+    cout << "\n===== User Registration =====\n";
+
+    cout << "Enter Username: ";
+    cin >> username;
+
+    cout << "Enter Password: ";
+    cin >> password;
+
+    // Validation
+    if (username.empty() || password.empty()) {
+        cout << "Error: Username and Password cannot be empty.\n";
+        return;
+    }
+
+    if (password.length() < 6) {
+        cout << "Error: Password must be at least 6 characters long.\n";
+        return;
+    }
+
+    // Check duplicate username
+    if (userExists(username)) {
+        cout << "Error: Username already exists. Please choose another.\n";
+        return;
+    }
+
+    // Store credentials
+    ofstream file("users.txt", ios::app);
+    file << username << " " << password << endl;
+    file.close();
+
+    cout << "Registration Successful!\n";
+}
+
+// Login Function
+void loginUser() {
+    string username, password;
+    string user, pass;
+    bool found = false;
+
+    cout << "\n===== User Login =====\n";
+
+    cout << "Enter Username: ";
+    cin >> username;
+
+    cout << "Enter Password: ";
+    cin >> password;
+
+    ifstream file("users.txt");
+
+    while (file >> user >> pass) {
+        if (user == username && pass == password) {
+            found = true;
+            break;
+        }
+    }
+
+    file.close();
+
+    if (found)
+        cout << "Login Successful! Welcome, " << username << "!\n";
+    else
+        cout << "Error: Invalid Username or Password.\n";
+}
+
+// Main Function
+int main() {
+    int choice;
+
+    do {
+        cout << "\n========== LOGIN & REGISTRATION ==========\n";
+        cout << "1. Register\n";
+        cout << "2. Login\n";
+        cout << "3. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                registerUser();
+                break;
+
+            case 2:
+                loginUser();
+                break;
+
+            case 3:
+                cout << "Exiting Program...\n";
+                break;
+
+            default:
+                cout << "Invalid Choice! Try Again.\n";
+        }
+
+    } while (choice != 3);
+
+    return 0;
+}
+========== LOGIN & REGISTRATION ==========
+1. Register
+2. Login
+3. Exit
+Enter your choice: 1
+
+===== User Registration =====
+Enter Username: samarth
+Enter Password: password123
+Registration Successful!
+
+========== LOGIN & REGISTRATION ==========
+1. Register
+2. Login
+3. Exit
+Enter your choice: 1
+
+===== User Registration =====
+Enter Username: samarth
+Enter Password: newpass123
+Error: Username already exists. Please choose another.
+
+========== LOGIN & REGISTRATION ==========
+1. Register
+2. Login
+3. Exit
+Enter your choice: 2
+
+===== User Login =====
+Enter Username: samarth
+Enter Password: password123
+Login Successful! Welcome, samarth!
+
+
+Banking system
+#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+// Transaction Class
+class Transaction {
+public:
+    string type;
+    double amount;
+
+    Transaction(string t, double a) {
+        type = t;
+        amount = a;
+    }
+
+    void display() {
+        cout << left << setw(15) << type
+             << "$" << fixed << setprecision(2) << amount << endl;
+    }
+};
+
+// Customer Class
+class Customer {
+public:
+    int customerID;
+    string name;
+
+    Customer(int id, string n) {
+        customerID = id;
+        name = n;
+    }
+
+    void display() {
+        cout << "Customer ID : " << customerID << endl;
+        cout << "Name        : " << name << endl;
+    }
+};
+
+// Account Class
+class Account {
+public:
+    int accountNo;
+    Customer customer;
+    double balance;
+    vector<Transaction> history;
+
+    Account(int accNo, Customer c, double bal)
+        : customer(c) {
+        accountNo = accNo;
+        balance = bal;
+    }
+
+    void deposit(double amount) {
+        balance += amount;
+        history.push_back(Transaction("Deposit", amount));
+        cout << "Deposit Successful!\n";
+    }
+
+    void withdraw(double amount) {
+        if (amount > balance) {
+            cout << "Insufficient Balance!\n";
+            return;
+        }
+
+        balance -= amount;
+        history.push_back(Transaction("Withdraw", amount));
+        cout << "Withdrawal Successful!\n";
+    }
+
+    void transfer(Account &receiver, double amount) {
+        if (amount > balance) {
+            cout << "Insufficient Balance!\n";
+            return;
+        }
+
+        balance -= amount;
+        receiver.balance += amount;
+
+        history.push_back(Transaction("Transfer Out", amount));
+        receiver.history.push_back(Transaction("Transfer In", amount));
+
+        cout << "Transfer Successful!\n";
+    }
+
+    void showTransactions() {
+        cout << "\nTransaction History\n";
+        cout << "---------------------------\n";
+
+        if (history.empty()) {
+            cout << "No Transactions Available.\n";
+            return;
+        }
+
+        for (Transaction t : history)
+            t.display();
+    }
+
+    void displayAccount() {
+        cout << "\n========== Account Details ==========\n";
+        customer.display();
+        cout << "Account No : " << accountNo << endl;
+        cout << "Balance    : $" << fixed << setprecision(2)
+             << balance << endl;
+    }
+};
+
+int main() {
+
+    // Create Customers
+    Customer c1(101, "Samarth");
+    Customer c2(102, "Rahul");
+
+    // Create Accounts
+    Account a1(1001, c1, 5000);
+    Account a2(1002, c2, 3000);
+
+    int choice;
+    double amount;
+
+    do {
+        cout << "\n====== BANK MANAGEMENT SYSTEM ======\n";
+        cout << "1. Deposit\n";
+        cout << "2. Withdraw\n";
+        cout << "3. Transfer\n";
+        cout << "4. View Account Details\n";
+        cout << "5. View Transaction History\n";
+        cout << "6. Exit\n";
+        cout << "Enter Choice: ";
+        cin >> choice;
+
+        switch(choice) {
+
+        case 1:
+            cout << "Enter Deposit Amount: $";
+            cin >> amount;
+            a1.deposit(amount);
+            break;
+
+        case 2:
+            cout << "Enter Withdrawal Amount: $";
+            cin >> amount;
+            a1.withdraw(amount);
+            break;
+
+        case 3:
+            cout << "Enter Transfer Amount: $";
+            cin >> amount;
+            a1.transfer(a2, amount);
+            break;
+
+        case 4:
+            a1.displayAccount();
+            break;
+
+        case 5:
+            a1.showTransactions();
+            break;
+
+        case 6:
+            cout << "Thank You!\n";
+            break;
+
+        default:
+            cout << "Invalid Choice!\n";
+        }
+
+    } while(choice != 6);
+
+    return 0;
+}
+====== BANK MANAGEMENT SYSTEM ======
+1. Deposit
+2. Withdraw
+3. Transfer
+4. View Account Details
+5. View Transaction History
+6. Exit
+Enter Choice: 1
+
+Enter Deposit Amount: 1500
+Deposit Successful!
+
+====== BANK MANAGEMENT SYSTEM ======
+Enter Choice: 2
+
+Enter Withdrawal Amount: 1000
+Withdrawal Successful!
+
+====== BANK MANAGEMENT SYSTEM ======
+Enter Choice: 3
+
+Enter Transfer Amount: 500
+Transfer Successful!
+
+====== BANK MANAGEMENT SYSTEM ======
+Enter Choice: 4
+
+========== Account Details ==========
+Customer ID : 101
+Name        : Samarth
+Account No  : 1001
+Balance     : $5000.00
+
+====== BANK MANAGEMENT SYSTEM ======
+Enter Choice: 5
+
+Transaction History
+---------------------------
+Deposit       $1500.00
+Withdraw      $1000.00
+Transfer Out  $500.00
